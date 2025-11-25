@@ -101,12 +101,12 @@ function renderPricing(records) {
 
         tableHTML += `
             <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                <td class="py-3 px-4 text-secondary font-medium">${unitName}</td>
-                <td class="py-3 px-4 text-secondary">
+                <td class="py-3 px-4 text-primary font-medium">${unitName}</td>
+                <td class="py-3 px-4 text-primary">
                     <span class="font-bold text-primary">${price}</span>
                     ${promotion ? `<span class="ml-2 inline-block bg-accent text-white text-xs px-2 py-0.5 rounded-full uppercase tracking-wide font-bold">${promotion}</span>` : ''}
                 </td>
-                <td class="py-3 px-4 text-secondary text-sm">Available Now</td>
+                <td class="py-3 px-4 text-primary text-sm">Available Now</td>
             </tr>
         `;
     });
@@ -160,7 +160,7 @@ function renderFAQ(records) {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
-                <div id="${id}" class="hidden bg-gray-50 p-4 border-t border-gray-100 text-secondary leading-relaxed prose max-w-none">
+                <div id="${id}" class="hidden bg-gray-50 p-4 border-t border-gray-100 text-primary leading-relaxed prose max-w-none">
                     ${answer}
                 </div>
             </div>
