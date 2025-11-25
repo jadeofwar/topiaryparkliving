@@ -95,7 +95,7 @@ function renderPricing(records) {
 
     records.forEach(record => {
         const fields = record.fields;
-        const unitName = fields['Unit Name'] || fields['Name'] || 'Apartment';
+        const unitName = fields['Unit Type'] || fields['Unit Name'] || fields['Name'] || 'Apartment';
         const price = fields['Current Price'] ? formatCurrency(fields['Current Price']) : 'Call for pricing';
         const promotion = fields['Promotions'];
 
