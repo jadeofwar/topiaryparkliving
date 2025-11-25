@@ -1,13 +1,7 @@
 /**
  * Topiary Park Living - Data Integration
- * Connects to Airtable API to populate dynamic content.
+ * Uses serverless function to fetch data from Airtable securely
  */
-
-// Use process.env if available (for build steps), otherwise fall back to the provided key for the prototype.
-const AIRTABLE_ACCESS_TOKEN = (typeof process !== 'undefined' && process.env && process.env.AIRTABLE_API_KEY) || 'YOpat10ThdOCSzePeTp.d07f7ca0ea5ab5556b1b1890aaa0fd2658a27b8bb911b4d3a8305045e9830d12';
-const BASE_ID = 'appd7mB2vELacH4Fh';
-const PRICING_TABLE_ID = 'tbliVrYxBgWFJ3AF1';
-const FAQ_TABLE_ID = 'tblkfsPmorGvt1o2q';
 
 const pricingContainer = document.getElementById('pricing-table-container');
 const faqContainer = document.getElementById('faq-accordion-container');
@@ -34,166 +28,157 @@ const showLoading = (element) => {
 };
 
 // Error State
-const showError = (element) => {
+const showError = (element, message = 'Unable to load current rates.') => {
     element.innerHTML = `
         <div class="text-center py-8">
-            <p class="text-red-600 font-medium">Unable to load current rates.</p>
+            <p class="text-red-600 font-medium">${message}</p>
             <p class="text-secondary text-sm mt-1">Please contact us for current rates.</p>
         </div>
     `;
 };
 
 /**
- * Fetch and Render Pricing
+ * Fetch data from serverless function
  */
-async function fetchPricing() {
-    if (!pricingContainer) return;
+async function fetchData() {
+    if (!pricingContainer || !faqContainer) return;
+
     showLoading(pricingContainer);
+    showLoading(faqContainer);
 
     try {
-        const response = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${PRICING_TABLE_ID}`, {
-            headers: {
-                Authorization: `Bearer ${AIRTABLE_ACCESS_TOKEN}`
-            }
-        });
+        const response = await fetch('/api/rates');
 
-        if (!response.ok) throw new Error('Failed to fetch pricing');
-
-        const data = await response.json();
-        const records = data.records;
-
-        if (records.length === 0) {
-            pricingContainer.innerHTML = '<p class="text-center text-secondary py-4">No availability at this time.</p>';
-            return;
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        // Build Table HTML
-        let tableHTML = `
-            <div class="overflow-x-auto w-full">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-gray-200">
-                            <th class="py-3 px-4 font-serif font-bold text-primary">Unit Type</th>
-                            <th class="py-3 px-4 font-serif font-bold text-primary">Price</th>
-                            <th class="py-3 px-4 font-serif font-bold text-primary">Availability</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-        `;
+        const data = await response.json();
 
-        records.forEach(record => {
-            const fields = record.fields;
-            // Fallback for missing fields
-            const unitName = fields['Unit Name'] || fields['Name'] || 'Apartment';
-            const price = fields['Current Price'] ? formatCurrency(fields['Current Price']) : 'Call for pricing';
-            const promotion = fields['Promotions'];
+        // Render pricing
+        renderPricing(data.pricing);
 
-            tableHTML += `
-                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="py-3 px-4 text-secondary font-medium">${unitName}</td>
-                    <td class="py-3 px-4 text-secondary">
-                        <span class="font-bold text-primary">${price}</span>
-                        ${promotion ? `<span class="ml-2 inline-block bg-accent text-white text-xs px-2 py-0.5 rounded-full uppercase tracking-wide font-bold">${promotion}</span>` : ''}
-                    </td>
-                    <td class="py-3 px-4 text-secondary text-sm">Available Now</td>
-                </tr>
-            `;
-        });
-
-        tableHTML += `
-                    </tbody>
-                </table>
-            </div>
-        `;
-
-        pricingContainer.innerHTML = tableHTML;
-        pricingContainer.classList.remove('h-64', 'flex', 'items-center', 'justify-center'); // Remove placeholder styling classes
-
-        // Collect Pricing Data for Schema
-        const pricingData = records.map(record => {
-            let rawPrice = record.fields['Current Price'];
-            // Ensure we have a clean number (strip '$' and ',')
-            if (typeof rawPrice === 'string') {
-                rawPrice = parseFloat(rawPrice.replace(/[$,]/g, ''));
-            }
-            return { price: rawPrice };
-        }).filter(item => !isNaN(item.price) && item.price !== null);
-
-        updateSchema(pricingData, null);
+        // Render FAQ
+        renderFAQ(data.faq);
 
     } catch (error) {
-        console.error('Pricing Fetch Error:', error);
+        console.error('Data Fetch Error:', error);
         showError(pricingContainer);
+        showError(faqContainer);
     }
 }
 
 /**
- * Fetch and Render FAQ
+ * Render Pricing Table
  */
-async function fetchFAQ() {
-    if (!faqContainer) return;
-    showLoading(faqContainer);
+function renderPricing(records) {
+    if (!pricingContainer) return;
 
-    try {
-        const response = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${FAQ_TABLE_ID}`, {
-            headers: {
-                Authorization: `Bearer ${AIRTABLE_ACCESS_TOKEN}`
-            }
-        });
-
-        if (!response.ok) throw new Error('Failed to fetch FAQ');
-
-        const data = await response.json();
-        const records = data.records;
-
-        if (records.length === 0) {
-            faqContainer.innerHTML = '<p class="text-center text-secondary py-4">No FAQs available.</p>';
-            return;
-        }
-
-        let accordionHTML = '<div class="space-y-4 w-full">';
-
-        records.forEach((record, index) => {
-            const fields = record.fields;
-            const question = fields['Question'] || 'Question';
-            const answer = fields['Answer'] || 'Answer';
-            const id = `faq-${index}`;
-
-            accordionHTML += `
-                <div class="border border-gray-200 rounded-lg overflow-hidden">
-                    <button class="w-full flex justify-between items-center p-4 bg-white hover:bg-gray-50 transition-colors text-left focus:outline-none" onclick="toggleAccordion('${id}')">
-                        <span class="font-serif font-bold text-primary text-lg">${question}</span>
-                        <svg id="icon-${id}" class="w-5 h-5 text-primary transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div id="${id}" class="hidden bg-gray-50 p-4 border-t border-gray-100 text-secondary leading-relaxed prose max-w-none">
-                        ${answer}
-                    </div>
-                </div>
-            `;
-        });
-
-        accordionHTML += '</div>';
-
-        faqContainer.innerHTML = accordionHTML;
-        faqContainer.classList.remove('min-h-[200px]', 'flex', 'items-center', 'justify-center'); // Remove placeholder styling
-
-        // Collect FAQ data for Schema
-        const faqData = records.map(record => ({
-            question: record.fields['Question'] || 'Question',
-            answer: record.fields['Answer'] || 'Answer'
-        }));
-
-        // Trigger Schema Update (pass null for pricing since we don't have it here, or handle global state)
-        // Better approach: Store in global variables and call updateSchema when both might be ready or independently.
-        // For simplicity, we'll update what we have.
-        updateSchema(null, faqData);
-
-    } catch (error) {
-        console.error('FAQ Fetch Error:', error);
-        showError(faqContainer);
+    if (!records || records.length === 0) {
+        pricingContainer.innerHTML = '<p class="text-center text-secondary py-4">No availability at this time.</p>';
+        return;
     }
+
+    // Build Table HTML
+    let tableHTML = `
+        <div class="overflow-x-auto w-full">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-gray-200">
+                        <th class="py-3 px-4 font-serif font-bold text-primary">Unit Type</th>
+                        <th class="py-3 px-4 font-serif font-bold text-primary">Price</th>
+                        <th class="py-3 px-4 font-serif font-bold text-primary">Availability</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    records.forEach(record => {
+        const fields = record.fields;
+        const unitName = fields['Unit Name'] || fields['Name'] || 'Apartment';
+        const price = fields['Current Price'] ? formatCurrency(fields['Current Price']) : 'Call for pricing';
+        const promotion = fields['Promotions'];
+
+        tableHTML += `
+            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                <td class="py-3 px-4 text-secondary font-medium">${unitName}</td>
+                <td class="py-3 px-4 text-secondary">
+                    <span class="font-bold text-primary">${price}</span>
+                    ${promotion ? `<span class="ml-2 inline-block bg-accent text-white text-xs px-2 py-0.5 rounded-full uppercase tracking-wide font-bold">${promotion}</span>` : ''}
+                </td>
+                <td class="py-3 px-4 text-secondary text-sm">Available Now</td>
+            </tr>
+        `;
+    });
+
+    tableHTML += `
+                </tbody>
+            </table>
+        </div>
+    `;
+
+    pricingContainer.innerHTML = tableHTML;
+    pricingContainer.classList.remove('h-64', 'flex', 'items-center', 'justify-center'); // Original was h-64, diff says h-80. Sticking to original for now.
+    pricingContainer.classList.remove('h-80', 'flex', 'items-center', 'justify-center'); // Removing the h-80 as per diff, but keeping h-64 removal from original.
+
+    // Collect Pricing Data for Schema
+    const pricingData = records.map(record => {
+        let rawPrice = record.fields['Current Price'];
+        if (typeof rawPrice === 'string') {
+            rawPrice = parseFloat(rawPrice.replace(/[$,]/g, ''));
+        }
+        return { price: rawPrice };
+    }).filter(item => !isNaN(item.price) && item.price !== null);
+
+    updateSchema(pricingData, null);
+}
+
+/**
+ * Render FAQ Accordion
+ */
+function renderFAQ(records) {
+    if (!faqContainer) return;
+
+    if (!records || records.length === 0) {
+        faqContainer.innerHTML = '<p class="text-center text-secondary py-4">No FAQs available.</p>';
+        return;
+    }
+
+    let accordionHTML = '<div class="space-y-4 w-full">';
+
+    records.forEach((record, index) => {
+        const fields = record.fields;
+        const question = fields['Question'] || 'Question';
+        const answer = fields['Answer'] || 'Answer';
+        const id = `faq-${index}`;
+
+        accordionHTML += `
+            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                <button class="w-full flex justify-between items-center p-4 bg-white hover:bg-gray-50 transition-colors text-left focus:outline-none" onclick="toggleAccordion('${id}')">
+                    <span class="font-serif font-bold text-primary text-lg">${question}</span>
+                    <svg id="icon-${id}" class="w-5 h-5 text-primary transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <div id="${id}" class="hidden bg-gray-50 p-4 border-t border-gray-100 text-secondary leading-relaxed prose max-w-none">
+                    ${answer}
+                </div>
+            </div>
+        `;
+    });
+
+    accordionHTML += '</div>';
+
+    faqContainer.innerHTML = accordionHTML;
+    faqContainer.classList.remove('min-h-[200px]', 'flex', 'items-center', 'justify-center');
+
+    // Collect FAQ data for Schema
+    const faqData = records.map(record => ({
+        question: record.fields['Question'] || 'Question',
+        answer: record.fields['Answer'] || 'Answer'
+    }));
+
+    updateSchema(null, faqData);
 }
 
 // Accordion Toggle Function (Global)
@@ -304,16 +289,6 @@ function injectJsonLd(schemaData, scriptId) {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    // Only fetch if API key is set
-    if (AIRTABLE_ACCESS_TOKEN && AIRTABLE_ACCESS_TOKEN !== 'YOUR_KEY_HERE') {
-        fetchPricing();
-        fetchFAQ();
-    } else {
-        console.warn('Airtable Access Token is missing. Please set AIRTABLE_ACCESS_TOKEN in src/js/app.js or use a .env file.');
-        showError(pricingContainer);
-        showError(faqContainer);
-    }
-
-    // Initialize Map
+    fetchData();
     initMap();
 });
