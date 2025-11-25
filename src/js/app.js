@@ -103,8 +103,8 @@ function renderPricing(records) {
             <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                 <td class="py-3 px-4 text-primary font-medium">${unitName}</td>
                 <td class="py-3 px-4 text-primary">
-                    <span class="font-bold text-primary">${price}</span>
-                    ${promotion ? `<span class="ml-2 inline-block bg-accent text-white text-xs px-2 py-0.5 rounded-full uppercase tracking-wide font-bold">${promotion}</span>` : ''}
+                    <div class="font-bold text-primary">${price}</div>
+                    ${promotion ? `<div class="text-xs font-bold text-accent mt-2 leading-tight uppercase tracking-wide">${promotion}</div>` : ''}
                 </td>
                 <td class="py-3 px-4 text-primary text-sm">Available Now</td>
             </tr>
