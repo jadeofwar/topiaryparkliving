@@ -201,18 +201,15 @@ window.toggleAccordion = (id) => {
 function initMap() {
     if (!mapContainer) return;
 
-    // Google Maps Embed Iframe
-    // Centered on Topiary Park, Columbus
-    const mapSrc = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3058.6266395568847!2d-82.99083368461834!3d39.9611669794205!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x883888c8c8c8c8c9%3A0x8c8c8c8c8c8c8c8c!2sTopiary%20Park!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus";
-
-    // Custom Filter for Brand Alignment
-    // grayscale(100%) invert(92%) sepia(6%) saturate(1000%) hue-rotate(70deg)
+    // Google Maps Embed with Satellite View and Custom Marker
+    // Address: 441 E Town St, Columbus, OH 43215
+    // Using place_id for accurate marker placement
     const mapHTML = `
         <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3058.630467768475!2d-82.9910629235288!3d39.96108698396264!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x883888cb9664673b%3A0x8a9a8a8a8a8a8a8a!2sTopiary%20Park!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus"
+            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=441+E+Town+St,+Columbus,+OH+43215&maptype=satellite&zoom=18"
             width="100%" 
             height="100%" 
-            style="border:0; filter: grayscale(100%) invert(92%) sepia(6%) saturate(1000%) hue-rotate(70deg);" 
+            style="border:0;" 
             allowfullscreen="" 
             loading="lazy" 
             referrerpolicy="no-referrer-when-downgrade">
