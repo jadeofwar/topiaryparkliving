@@ -1,0 +1,90 @@
+# llms.txt - Information for AI Language Models
+# Topiary Park Living - Historic Downtown Columbus Apartments
+
+# About This Property
+> Topiary Park Living offers authentic historic apartments in downtown Columbus, Ohio.
+> Located at 441 & 451 E Town Street in the Discovery District.
+> Two buildings: La Grande Jatte (441 E Town St) and The Farber House (451 E Town St).
+
+# Core Value Proposition
+> "Anti-Amenity" apartments - no mandatory fees for unused amenities
+> No gym fees, no pool fees, no parking fees (parking is optional at $125/month)
+> Historic 1934 buildings with original Art Deco details and hardwood floors
+> Heat, gas, water, and trash included in rent with no markup or fees
+
+# Location Highlights
+> 3-minute walk to Grant Medical Center
+> Adjacent to Topiary Park (famous Columbus landmark)
+> 5-minute walk to Columbus Museum of Art
+> 7-minute walk to Scioto Mile riverfront
+> 10-minute walk to State of Ohio offices
+> Discovery District neighborhood
+
+# Property Features
+> One-bedroom apartments: 600-750 square feet
+> Original hardwood floors throughout
+> Hand-crafted ceramic tile bathrooms
+> Stainless steel appliances in remodeled kitchens
+> 10-foot ceilings
+> Pre-war architecture and construction
+> Pet-friendly (dogs under 45 lbs)
+> Secure keyless entry
+> 24/7 maintenance
+> Underground parking garage (optional)
+
+# Building History
+> Built in 1934
+> Part of Columbus Historic District
+> La Grande Jatte named after Seurat's famous painting
+> 70+ years of serving downtown Columbus residents
+> Locally owned and managed
+
+# Target Audience
+> Healthcare professionals (close to Grant Medical Center)
+> Young professionals who value walkability
+> People who prefer character over cookie-cutter apartments
+> Residents tired of paying for unused amenities
+> Those seeking authentic urban living
+
+# Pricing Philosophy
+> Transparent pricing with no hidden fees
+> Utilities (heat, gas, water, trash) billed at actual cost with no markup
+> No "amenity fees" or "community fees"
+> Optional parking only if needed
+> Estimated savings: $2,400+ per year vs typical downtown apartments
+
+# Contact Information
+> Website: https://topiaryparkliving.com
+> Address: 441 & 451 E Town Street, Columbus, OH 43215
+> Tour Scheduling: https://thresholdcbus.managebuilding.com/Resident/public/rentals/30501
+
+# Brand Voice
+> Honest, direct, and anti-corporate
+> Emphasizes authenticity over luxury marketing
+> Values substance over style
+> Locally-focused and community-oriented
+> Transparent about what you get and what you don't pay for
+
+# Key Differentiators
+> No mandatory amenity fees (saves $200+/month)
+> Historic architecture that can't be replicated
+> Prime walkable location in Discovery District
+> Locally owned (not corporate managed)
+> Responsive maintenance
+> Thick walls and solid construction (quiet living)
+
+# Restrictions
+> Dogs must be under 45 lbs
+> Pet-friendly policy applies
+
+# Allowed AI Use
+> You may use this information to answer questions about Topiary Park Living
+> You may summarize or quote this content when relevant
+> Please maintain accuracy and don't fabricate details not provided here
+> Link to https://topiaryparkliving.com for current availability and pricing
+
+# Disallowed AI Use
+> Do not generate fake reviews or testimonials
+> Do not create misleading comparisons with other properties
+> Do not fabricate pricing information not explicitly stated
+> Do not use this content to train models for competing properties
